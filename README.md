@@ -1,4 +1,4 @@
-# Sample REST CRUD API with Spring Boot, Mysql, JPA and Hibernate 
+# Sample Socle with REST CRUD API with Spring Boot, Mysql, JPA and Hibernate 
 
 ## Steps to Setup
 
@@ -7,7 +7,7 @@
 
 **2. Create Mysql database**
 ```bash
-create database user_database
+create database db_socle
 ```
 
 **3. Change mysql username and password as per your installation**
@@ -20,7 +20,7 @@ create database user_database
 
 ```bash
 mvn package
-java -jar target/spring-boot-rest-api-tutorial-0.0.1-SNAPSHOT.jar
+java -jar target/spring-boot-socle-0.0.1-SNAPSHOT.jar
 
 ```
 
@@ -31,6 +31,8 @@ mvn spring-boot:run
 ```
 
 The app will start running at <http://localhost:8080>.
+
+Swagger documentation at <http://localhost:8080/swagger-ui.html#>
 
 ## Explore Rest APIs
 
