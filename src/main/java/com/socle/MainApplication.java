@@ -1,4 +1,4 @@
-package com.socle.main;
+package com.socle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
