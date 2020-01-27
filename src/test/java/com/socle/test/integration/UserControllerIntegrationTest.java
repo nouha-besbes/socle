@@ -33,7 +33,7 @@ import com.socle.service.dto.UserDto;
 public class UserControllerIntegrationTest {
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private TestRestTemplate restTemplateTest;
 
     @LocalServerPort
     private int port;
@@ -66,7 +66,7 @@ public class UserControllerIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<UserDto[]> response = restTemplate.exchange(getRootUrl() + "users", HttpMethod.GET, entity,
+        ResponseEntity<UserDto[]> response = restTemplateTest.exchange(getRootUrl() + "users", HttpMethod.GET, entity,
                 UserDto[].class);
 
         Assert.assertNotNull(response.getBody());
@@ -79,8 +79,10 @@ public class UserControllerIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<UserDto> response = restTemplate.exchange(getRootUrl() + "users/1", HttpMethod.GET, entity,
-                UserDto.class);
+        Long id = userRepository.findAll().get(0).getId();
+
+        ResponseEntity<UserDto> response = restTemplateTest.exchange(getRootUrl() + "users/" + id, HttpMethod.GET,
+                entity, UserDto.class);
 
         Assert.assertNotNull(response.getBody());
         Assert.assertEquals(response.getBody().getEmail(), "howtodoinjava@gmail.com");
@@ -92,8 +94,8 @@ public class UserControllerIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<ApiError> response = restTemplate.exchange(getRootUrl() + "users/100", HttpMethod.GET, entity,
-                ApiError.class);
+        ResponseEntity<ApiError> response = restTemplateTest.exchange(getRootUrl() + "users/100", HttpMethod.GET,
+                entity, ApiError.class);
 
         Assert.assertNotNull(response.getBody().getMessage());
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -107,7 +109,7 @@ public class UserControllerIntegrationTest {
         user.setLastName("admin");
         user.setPassword("test");
 
-        ResponseEntity<UserDto> response = restTemplate.postForEntity(getRootUrl() + "users", user, UserDto.class);
+        ResponseEntity<UserDto> response = restTemplateTest.postForEntity(getRootUrl() + "users", user, UserDto.class);
 
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getBody().getId());
@@ -122,7 +124,8 @@ public class UserControllerIntegrationTest {
         user.setLastName("admin");
         // password missing
 
-        ResponseEntity<ApiError> response = restTemplate.postForEntity(getRootUrl() + "users", user, ApiError.class);
+        ResponseEntity<ApiError> response = restTemplateTest.postForEntity(getRootUrl() + "users", user,
+                ApiError.class);
 
         Assert.assertNotNull(response);
         Assert.assertTrue(response.getBody().getErrors().size() == 2);
@@ -146,7 +149,7 @@ public class UserControllerIntegrationTest {
 
         HttpEntity<String> entity = new HttpEntity<String>(requestBody, headers);
         String uri = getRootUrl() + "users/{id}";
-        ResponseEntity<UserDto> response = restTemplate.exchange(uri, HttpMethod.PUT, entity, UserDto.class, id);
+        ResponseEntity<UserDto> response = restTemplateTest.exchange(uri, HttpMethod.PUT, entity, UserDto.class, id);
 
         Assert.assertNotNull(response.getBody());
         Assert.assertEquals(userRepository.findById(id).get().getFirstName(), response.getBody().getFirstName());
@@ -164,7 +167,7 @@ public class UserControllerIntegrationTest {
 
         HttpEntity<String> entity = new HttpEntity<String>(requestBody, headers);
         String uri = getRootUrl() + "users/{id}";
-        ResponseEntity<ApiError> response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ApiError.class, id);
+        ResponseEntity<ApiError> response = restTemplateTest.exchange(uri, HttpMethod.PUT, entity, ApiError.class, id);
 
         Assert.assertNotNull(response.getBody().getMessage());
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -180,7 +183,7 @@ public class UserControllerIntegrationTest {
 
         HttpEntity<String> entity = new HttpEntity<String>(requestBody, headers);
         String uri = getRootUrl() + "users/{id}";
-        ResponseEntity<ApiError> response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ApiError.class, id);
+        ResponseEntity<ApiError> response = restTemplateTest.exchange(uri, HttpMethod.PUT, entity, ApiError.class, id);
 
         Assert.assertNotNull(response);
         Assert.assertTrue(response.getBody().getErrors().size() == 1);
@@ -189,14 +192,27 @@ public class UserControllerIntegrationTest {
 
     @Test
     public void testDeleteUser() {
-        ResponseEntity<?> responseEntity = restTemplate.exchange(getRootUrl() + "/users/" + "{id}", HttpMethod.DELETE,
-                null, Map.class, new Long(1));
 
-        // verify
-        int status = responseEntity.getStatusCodeValue();
-        // TODO
-        // Assert.assertEquals("Incorrect Response Status", HttpStatus.GONE.value(), status);
+        String url = getRootUrl() + "user/{id}";
 
+        Long id = userRepository.findAll().stream().findAny().get().getId();
+
+        // exchange
+        ResponseEntity<Map> result = restTemplateTest.exchange(url, HttpMethod.DELETE, HttpEntity.EMPTY, Map.class, id);
+
+        Assert.assertTrue(result.getBody().containsKey("deleted") == Boolean.TRUE);
+    }
+
+    @Test
+    public void testDeleteUser_notFound() {
+
+        String url = getRootUrl() + "user/{id}";
+
+        // exchange
+        ResponseEntity<ApiError> result = restTemplateTest.exchange(url, HttpMethod.DELETE, HttpEntity.EMPTY,
+                ApiError.class, 0);
+
+        Assert.assertTrue(result.getStatusCode() == HttpStatus.NOT_FOUND);
     }
 
 }

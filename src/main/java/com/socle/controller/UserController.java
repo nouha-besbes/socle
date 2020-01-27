@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.socle.service.IUserService;
@@ -51,7 +52,7 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{id}")
-    public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws Exception {
+    public @ResponseBody Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws Exception {
         userService.deleteById(userId);
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
