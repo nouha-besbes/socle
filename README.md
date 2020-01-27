@@ -47,7 +47,3 @@ The app defines following CRUD APIs.
     PUT /api/v1/users/{userId}
     
     DELETE /api/v1/users/{userId}
-
-You can find the tutorial for this application on my blog -
-
-<https://www.prathapgivantha.wordpress.com>
