@@ -1,5 +1,7 @@
 package com.socle.service.dto;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -10,13 +12,17 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class UserDto {
+public class UserDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @EqualsAndHashCode.Include
     private Long id;

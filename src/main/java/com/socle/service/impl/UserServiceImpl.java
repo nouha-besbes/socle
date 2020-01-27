@@ -37,7 +37,7 @@ public class UserServiceImpl implements IUserService {
     public Optional<UserDto> findDtoById(Long userId) throws ResourceNotFoundException {
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) {
-            throw new ResourceNotFoundException("User not found" + userId);
+            throw new ResourceNotFoundException("User not found " + userId);
         }
         return Optional.of(modelMapper.map(user.get(), UserDto.class));
     }
