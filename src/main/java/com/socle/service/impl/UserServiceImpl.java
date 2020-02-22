@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.socle.repository.IUserRepository;
@@ -27,6 +29,7 @@ public class UserServiceImpl implements IUserService {
         this.userRepository = userRepository;
     }
 
+    @Cacheable("users")
     @Override
     public List<UserDto> findAll() {
         List<User> users = userRepository.findAll();
@@ -42,11 +45,13 @@ public class UserServiceImpl implements IUserService {
         return Optional.of(modelMapper.map(user.get(), UserDto.class));
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Override
     public UserDto save(UserDto userDto) {
         return modelMapper.map(userRepository.save(modelMapper.map(userDto, User.class)), UserDto.class);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Override
     public UserDto update(Long userId, UserDto userDto) throws ResourceNotFoundException {
         User user = userRepository.findById(userId)
@@ -59,6 +64,7 @@ public class UserServiceImpl implements IUserService {
         return userDto;
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Override
     public void deleteById(Long userId) throws ResourceNotFoundException {
         if (!userRepository.existsById(userId)) {
