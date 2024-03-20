@@ -1,4 +1,4 @@
-# Sample Socle with REST CRUD API with Spring Boot, Mysql, JPA and Hibernate 
+# Sample Socle with REST CRUD API with Spring Boot, Integration Test with Junit 5
 
 ## Steps to Setup
 
